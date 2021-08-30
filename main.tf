@@ -27,10 +27,37 @@ module "network" {
   source = "./modules/network"
 }
 
-module "example_sg" {
+module "http_sg" {
   source      = "./modules/security_group"
-  name        = "module-sg"
+  name        = "http-sg"
   vpc_id      = module.network.vpc_id
   port        = 80
   cidr_blocks = ["0.0.0.0/0"]
+}
+
+module "https_sg" {
+  source      = "./modules/security_group"
+  name        = "https-sg"
+  vpc_id      = module.network.vpc_id
+  port        = 443
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+module "http_redirect_sg" {
+  source      = "./modules/security_group"
+  name        = "http-redirect-sg"
+  vpc_id      = module.network.vpc_id
+  port        = 8080
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+module "example_alb" {
+  source        = "./modules/alb"
+  subnet_ids    = module.network.public_subnet_ids
+  log_bucket_id = module.s3_bucket_log.id
+  security_groups = [
+    module.http_sg.security_group_id,
+    module.https_sg.security_group_id,
+    module.http_redirect_sg.security_group_id,
+  ]
 }
