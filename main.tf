@@ -52,7 +52,7 @@ module "http_redirect_sg" {
 }
 
 module "example_alb" {
-  source        = "./modules/alb"
+  source        = "./modules/alb/main"
   subnet_ids    = module.network.public_subnet_ids
   log_bucket_id = module.s3_bucket_log.id
   security_groups = [
@@ -60,4 +60,17 @@ module "example_alb" {
     module.https_sg.security_group_id,
     module.http_redirect_sg.security_group_id,
   ]
+}
+
+module "route53_record" {
+  source       = "./modules/route53_record"
+  domain_name  = var.domain_name
+  alb_dns_name = module.example_alb.alb_dns_name
+  alb_zone_id  = module.example_alb.alb_zone_id
+}
+
+module "example_alb_listner" {
+  source              = "./modules/alb/listner"
+  alb_arn             = module.example_alb.alb_arn
+  acm_certificate_arn = module.route53_record.certificate_arn
 }

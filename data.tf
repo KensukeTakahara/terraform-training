@@ -5,3 +5,7 @@ data "aws_iam_policy_document" "allow_describe_regions" {
     resources = ["*"]
   }
 }
+
+data "aws_route53_zone" "example" {
+  name = var.domain_name
+}
