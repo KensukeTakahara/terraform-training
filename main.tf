@@ -69,8 +69,33 @@ module "route53_record" {
   alb_zone_id  = module.example_alb.alb_zone_id
 }
 
+resource "aws_lb_target_group" "example" {
+  name                 = "example"
+  target_type          = "ip"
+  vpc_id               = module.network.vpc_id
+  port                 = 80
+  protocol             = "HTTP"
+  deregistration_delay = 300
+
+  health_check {
+    path                = "/"
+    healthy_threshold   = 5
+    unhealthy_threshold = 2
+    timeout             = 5
+    interval            = 30
+    matcher             = 200
+    port                = "traffic-port"
+    protocol            = "HTTP"
+  }
+
+  depends_on = [
+    module.example_alb
+  ]
+}
+
 module "example_alb_listner" {
   source              = "./modules/alb/listner"
   alb_arn             = module.example_alb.alb_arn
   acm_certificate_arn = module.route53_record.certificate_arn
+  target_group_arn    = aws_lb_target_group.example.arn
 }
