@@ -99,3 +99,18 @@ module "example_alb_listner" {
   acm_certificate_arn = module.route53_record.certificate_arn
   target_group_arn    = aws_lb_target_group.example.arn
 }
+
+module "nginx_sg" {
+  source      = "./modules/security_group"
+  name        = "nginx-sg"
+  vpc_id      = module.network.vpc_id
+  port        = 80
+  cidr_blocks = ["0.0.0.0/0"]
+}
+
+module "example_ecs" {
+  source             = "./modules/ecs"
+  security_group_ids = [module.nginx_sg.security_group_id]
+  private_subnet_ids = module.network.private_subnet_ids
+  target_group_arn   = aws_lb_target_group.example.arn
+}
