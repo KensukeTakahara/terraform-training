@@ -9,3 +9,7 @@ variable "private_subnet_ids" {
 variable "target_group_arn" {
   type = string
 }
+
+variable "execution_role_arn" {
+  type = string
+}

@@ -108,9 +108,17 @@ module "nginx_sg" {
   cidr_blocks = ["0.0.0.0/0"]
 }
 
+module "ecs_task_execution_role" {
+  source     = "./modules/iam_role"
+  name       = "ecs-task-excution"
+  identifier = "ecs-tasks.amazonaws.com"
+  policy     = data.aws_iam_policy_document.ecs_task_execution.json
+}
+
 module "example_ecs" {
   source             = "./modules/ecs"
   security_group_ids = [module.nginx_sg.security_group_id]
   private_subnet_ids = module.network.private_subnet_ids
   target_group_arn   = aws_lb_target_group.example.arn
+  execution_role_arn = module.ecs_task_execution_role.iam_role_arn
 }

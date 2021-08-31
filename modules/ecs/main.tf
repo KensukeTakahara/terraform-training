@@ -9,6 +9,7 @@ resource "aws_ecs_task_definition" "example" {
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   container_definitions    = file("${path.module}/container_definitions.json")
+  execution_role_arn       = var.execution_role_arn
 }
 
 resource "aws_ecs_service" "example" {
@@ -36,4 +37,9 @@ resource "aws_ecs_service" "example" {
   lifecycle {
     ignore_changes = [task_definition]
   }
+}
+
+resource "aws_cloudwatch_log_group" "for_ecs" {
+  name              = "/ecs/example"
+  retention_in_days = 180
 }
