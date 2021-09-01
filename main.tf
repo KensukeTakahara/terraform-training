@@ -117,12 +117,27 @@ module "ecs_task_execution_role" {
   policy     = data.aws_iam_policy_document.ecs_task_execution.json
 }
 
-module "example_ecs" {
-  source             = "./modules/ecs"
+module "example_nginx_ecs" {
+  source             = "./modules/ecs/nginx"
   security_group_ids = [module.nginx_sg.security_group_id]
   private_subnet_ids = module.network.private_subnet_ids
   target_group_arn   = aws_lb_target_group.example.arn
   execution_role_arn = module.ecs_task_execution_role.iam_role_arn
 
   depends_on = [module.example_alb_listner]
+}
+
+module "ecs_events_role" {
+  source     = "./modules/iam_role"
+  name       = "ecs-events"
+  identifier = "events.amazonaws.com"
+  policy     = data.aws_iam_policy.ecs_events_role_policy.policy
+}
+
+module "example_batch_ecs" {
+  source             = "./modules/ecs/batch"
+  execution_role_arn = module.ecs_task_execution_role.iam_role_arn
+  event_role_arn     = module.ecs_events_role.iam_role_arn
+  ecs_cluster_arn    = module.example_nginx_ecs.ecs_cluster_arn
+  subnet_ids         = module.network.private_subnet_ids
 }

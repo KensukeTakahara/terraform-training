@@ -23,3 +23,7 @@ data "aws_iam_policy_document" "ecs_task_execution" {
     resources = ["*"]
   }
 }
+
+data "aws_iam_policy" "ecs_events_role_policy" {
+  arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceEventsRole"
+}
