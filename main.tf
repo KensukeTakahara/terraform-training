@@ -98,6 +98,8 @@ module "example_alb_listner" {
   alb_arn             = module.example_alb.alb_arn
   acm_certificate_arn = module.route53_record.certificate_arn
   target_group_arn    = aws_lb_target_group.example.arn
+
+  depends_on = [module.route53_record]
 }
 
 module "nginx_sg" {
@@ -121,4 +123,6 @@ module "example_ecs" {
   private_subnet_ids = module.network.private_subnet_ids
   target_group_arn   = aws_lb_target_group.example.arn
   execution_role_arn = module.ecs_task_execution_role.iam_role_arn
+
+  depends_on = [module.example_alb_listner]
 }
