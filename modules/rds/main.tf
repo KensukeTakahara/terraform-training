@@ -51,11 +51,12 @@ resource "aws_db_instance" "example" {
   maintenance_window         = "mon:10:10-mon:10:40"
   auto_minor_version_upgrade = false
   # deletion_protection        = true
-  deletion_protection        = false
-  skip_final_snapshot        = false
-  port                       = var.port
-  vpc_security_group_ids     = [var.security_group_id]
-  parameter_group_name       = aws_db_parameter_group.example.name
-  option_group_name          = aws_db_option_group.example.name
-  db_subnet_group_name       = aws_db_subnet_group.example.name
+  deletion_protection = false
+  skip_final_snapshot = false
+  # final_snapshot_identifier = "example-backup"
+  port                   = var.port
+  vpc_security_group_ids = [var.security_group_id]
+  parameter_group_name   = aws_db_parameter_group.example.name
+  option_group_name      = aws_db_option_group.example.name
+  db_subnet_group_name   = aws_db_subnet_group.example.name
 }
