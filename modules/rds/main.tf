@@ -50,8 +50,9 @@ resource "aws_db_instance" "example" {
   backup_retention_period    = 30
   maintenance_window         = "mon:10:10-mon:10:40"
   auto_minor_version_upgrade = false
+  deletion_protection        = true
   skip_final_snapshot        = false
-  port                       = 3306
+  port                       = var.port
   vpc_security_group_ids     = [var.security_group_id]
   parameter_group_name       = aws_db_parameter_group.example.name
   option_group_name          = aws_db_option_group.example.name

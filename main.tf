@@ -1,3 +1,8 @@
+locals {
+  rds_port         = 3306
+  elasticache_port = 6379
+}
+
 module "describe_regions_for_ec2" {
   source     = "./modules/iam_role"
   name       = "describe-region-for-ec2"
@@ -162,7 +167,7 @@ module "mysql_sg" {
   source      = "./modules/security_group"
   name        = "mysql-sg"
   vpc_id      = module.network.vpc_id
-  port        = 3306
+  port        = local.rds_port
   cidr_blocks = [module.network.cidr_block]
 }
 
@@ -171,4 +176,20 @@ module "rds" {
   subnet_ids        = module.network.private_subnet_ids
   kms_key_id        = aws_kms_key.example.arn
   security_group_id = module.mysql_sg.security_group_id
+  port              = local.rds_port
+}
+
+module "redis_sg" {
+  source      = "./modules/security_group"
+  name        = "redis-sg"
+  vpc_id      = module.network.vpc_id
+  port        = local.elasticache_port
+  cidr_blocks = [module.network.cidr_block]
+}
+
+module "elasticache" {
+  source            = "./modules/elasticache"
+  subnet_ids        = module.network.private_subnet_ids
+  security_group_id = module.redis_sg.security_group_id
+  port              = local.elasticache_port
 }
