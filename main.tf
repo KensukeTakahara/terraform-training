@@ -157,3 +157,18 @@ resource "aws_kms_alias" "example" {
 module "ssm_example" {
   source = "./modules/ssm"
 }
+
+module "mysql_sg" {
+  source      = "./modules/security_group"
+  name        = "mysql-sg"
+  vpc_id      = module.network.vpc_id
+  port        = 3306
+  cidr_blocks = [module.network.cidr_block]
+}
+
+module "rds" {
+  source            = "./modules/rds"
+  subnet_ids        = module.network.private_subnet_ids
+  kms_key_id        = aws_kms_key.example.arn
+  security_group_id = module.mysql_sg.security_group_id
+}
