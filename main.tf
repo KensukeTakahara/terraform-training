@@ -193,3 +193,7 @@ module "elasticache" {
   security_group_id = module.redis_sg.security_group_id
   port              = local.elasticache_port
 }
+
+module "ecr" {
+  source = "./modules/ecr"
+}
