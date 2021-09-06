@@ -197,3 +197,15 @@ module "elasticache" {
 module "ecr" {
   source = "./modules/ecr"
 }
+
+module "codebuild_role" {
+  source     = "./modules/iam_role"
+  name       = "codebuild"
+  identifier = "codebuild.amazonaws.com"
+  policy     = data.aws_iam_policy_document.codebuild.json
+}
+
+module "codebuild_example" {
+  source           = "./modules/codebuild"
+  service_role_arn = module.codebuild_role.iam_role_arn
+}
