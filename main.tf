@@ -209,3 +209,25 @@ module "codebuild_example" {
   source           = "./modules/codebuild"
   service_role_arn = module.codebuild_role.iam_role_arn
 }
+
+module "codepipeline_role" {
+  source     = "./modules/iam_role"
+  name       = "codepipeline"
+  identifier = "codepipeline.amazonaws.com"
+  policy     = data.aws_iam_policy_document.codepipeline.json
+}
+
+module "s3_bucket_artifact" {
+  source      = "./modules/s3/artifact"
+  bucket_name = "kensuke-takahara-terraform-training-artifact-bucket"
+}
+
+module "codepipeline_example" {
+  source               = "./modules/codepipeline"
+  role_arn             = module.codepipeline_role.iam_role_arn
+  repository           = "KensukeTakahara/terraform-training"
+  codebuild_project_id = module.codebuild_example.id
+  ecs_cluster_name     = module.example_nginx_ecs.ecs_cluster_name
+  ecs_service_name     = module.example_nginx_ecs.ecs_service_name
+  artifact_bucket_id   = module.s3_bucket_artifact.id
+}
