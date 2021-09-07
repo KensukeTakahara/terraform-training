@@ -51,7 +51,8 @@ data "aws_iam_policy_document" "codebuild" {
       "ecr:InitializeLayerGroup",
       "ecr:UploadLayerPart",
       "ecr:CompleteLayerUpload",
-      "ecr:PutImage"
+      "ecr:PutImage",
+      "codestar-connections:UseConnection"
     ]
   }
 }
