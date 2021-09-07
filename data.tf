@@ -49,6 +49,7 @@ data "aws_iam_policy_document" "codebuild" {
       "ecr:DescribeImages",
       "ecr:BatchGetImage",
       "ecr:InitializeLayerGroup",
+      "ecr:InitiateLayerUpload",
       "ecr:UploadLayerPart",
       "ecr:CompleteLayerUpload",
       "ecr:PutImage",
