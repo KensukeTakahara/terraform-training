@@ -13,6 +13,6 @@ phases:
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE
   post_build:
     commands:
-      - printf '[{"name":"example","imageUrl":"%s"}]' $IMAGE > image_definitions.json
+      - printf '[{"name":"example","imageUrl":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE > image_definitions.json
 artifacts:
   file: image_definitions.json
