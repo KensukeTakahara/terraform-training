@@ -9,9 +9,8 @@ phases:
       - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
   build:
     commands:
-      - echo $IMAGE
       - docker build -t $IMAGE .
-      - docker push $IMAGE
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE
   post_build:
     commands:
       - printf '[{"name":"example","imageUrl":"%s"}]' $IMAGE > image_definitions.json
