@@ -16,4 +16,4 @@ phases:
     commands:
       - printf '[{"name":"example","imageUrl":"%s"}]' $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE > image_definitions.json
 artifacts:
-  file: imagedefinitions.json
+  files: imagedefinitions.json
