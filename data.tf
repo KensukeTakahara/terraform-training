@@ -34,10 +34,11 @@ data "aws_iam_policy_document" "codebuild" {
     resources = ["*"]
 
     actions = [
-      "s3:PutObject",
-      "s3:PutObjectAcl",
-      "s3:GetObject",
-      "s3:GetObjectVersion",
+      # "s3:PutObject",
+      # "s3:PutObjectAcl",
+      # "s3:GetObject",
+      # "s3:GetObjectVersion",
+      "s3:*",
       "logs:CreateLogGroup",
       "logs:CreateLogStream",
       "logs:PutLogEvents",
