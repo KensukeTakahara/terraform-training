@@ -10,6 +10,7 @@ phases:
   build:
     commands:
       - docker build -t $IMAGE .
+      - docker tag $IMAGE $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE
       - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE
   post_build:
     commands:
