@@ -75,6 +75,7 @@ data "aws_iam_policy_document" "codepipeline" {
       "ecs:ListTasks",
       "ecs:RegisterTaskDefinition",
       "ecs:UpdateService",
+      "ecs:*",
       "iam:PassRole",
       "codestar-connections:UseConnection"
     ]
