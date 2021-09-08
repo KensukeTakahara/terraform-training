@@ -52,7 +52,7 @@ resource "aws_db_instance" "example" {
   auto_minor_version_upgrade = false
   # deletion_protection        = true
   deletion_protection = false
-  skip_final_snapshot = false
+  skip_final_snapshot = true
   # final_snapshot_identifier = "example-backup"
   port                   = var.port
   vpc_security_group_ids = [var.security_group_id]
