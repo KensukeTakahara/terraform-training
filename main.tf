@@ -231,3 +231,22 @@ module "codepipeline_example" {
   ecs_service_name     = module.example_nginx_ecs.ecs_service_name
   artifact_bucket_id   = module.s3_bucket_artifact.id
 }
+
+module "s3_bucket_operation" {
+  source      = "./modules/s3/artifact"
+  bucket_name = "kensuke-takahara-terraform-training-operation-bucket"
+}
+
+module "ec2_for_ssm_role" {
+  source     = "./modules/iam_role"
+  name       = "ec2-for-ssm"
+  identifier = "ec2.amazonaws.com"
+  policy     = data.aws_iam_policy_document.ec2_for_ssm.json
+}
+
+module "session_manager_example" {
+  source              = "./modules/ssm/session_manager"
+  iam_role_name       = module.ec2_for_ssm_role.iam_role_name
+  private_subnet_id   = module.network.private_subnet_1a_id
+  operation_bucket_id = module.s3_bucket_operation.id
+}

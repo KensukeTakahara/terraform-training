@@ -10,6 +10,10 @@ output "private_subnet_ids" {
   value = [aws_subnet.private_1a.id, aws_subnet.private_1c.id]
 }
 
+output "private_subnet_1a_id" {
+  value = aws_subnet.private_1a.id
+}
+
 output "cidr_block" {
   value = aws_vpc.example.cidr_block
 }
