@@ -159,8 +159,8 @@ resource "aws_kms_alias" "example" {
   target_key_id = aws_kms_key.example.key_id
 }
 
-module "ssm_example" {
-  source = "./modules/ssm"
+module "ssm_parameter_store_example" {
+  source = "./modules/ssm/parameter_store"
 }
 
 module "mysql_sg" {

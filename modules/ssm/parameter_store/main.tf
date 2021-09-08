@@ -3,6 +3,7 @@ resource "aws_ssm_parameter" "db_username" {
   value       = "root"
   type        = "String"
   description = "データベースのユーザ名"
+  overwrite   = true
 }
 
 # パスワードはAWSコンソール上から手動で入れる
