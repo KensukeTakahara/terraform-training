@@ -250,3 +250,26 @@ module "session_manager_example" {
   private_subnet_id   = module.network.private_subnet_1a_id
   operation_bucket_id = module.s3_bucket_operation.id
 }
+
+module "s3_bucket_cloudwatch_logs" {
+  source      = "./modules/s3/artifact"
+  bucket_name = "kensuke-takahara-terraform-training-cloudwatch-logs-bucket"
+}
+
+module "kinesis_data_firehose_role" {
+  source     = "./modules/iam_role"
+  name       = "kinesis-data-firehose"
+  identifier = "firehose.amazonaws.com"
+  policy     = data.aws_iam_policy_document.kinesis_data_firehose.json
+}
+
+resource "aws_kinesis_firehose_delivery_stream" "example" {
+  name        = "example"
+  destination = "s3"
+
+  s3_configuration {
+    role_arn   = module.kinesis_data_firehose_role.iam_role_arn
+    bucket_arn = module.s3_bucket_cloudwatch_logs.arn
+    prefix     = "ecs-scheduled-tasks/example"
+  }
+}

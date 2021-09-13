@@ -109,3 +109,23 @@ data "aws_iam_policy_document" "ec2_for_ssm" {
 data "aws_iam_policy" "ec2_for_ssm" {
   arn = "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"
 }
+
+data "aws_iam_policy_document" "kinesis_data_firehose" {
+  statement {
+    effect = "Allow"
+
+    actions = [
+      "s3:AbortMultipartUpload",
+      "s3:GetBucketLocation",
+      "s3:GetObject",
+      "s3:ListBucket",
+      "s3:ListBucketMultipartUpload",
+      "s3:PutObject"
+    ]
+
+    resources = [
+      "arn:aws:s3:::${module.s3_bucket_cloudwatch_logs.id}",
+      "arn:aws:s3:::${module.s3_bucket_cloudwatch_logs.id}/*"
+    ]
+  }
+}
