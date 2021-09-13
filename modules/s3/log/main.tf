@@ -1,6 +1,4 @@
-locals {
-  tokyo_region_alb_account_id = "582318560864"
-}
+data "aws_elb_service_account" "current" {}
 
 resource "aws_s3_bucket" "alb_log" {
   bucket        = var.bucket_name
@@ -28,7 +26,7 @@ data "aws_iam_policy_document" "alb_log" {
 
     principals {
       type        = "AWS"
-      identifiers = [local.tokyo_region_alb_account_id]
+      identifiers = [data.aws_elb_service_account.current.id]
     }
   }
 }
