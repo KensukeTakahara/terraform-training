@@ -132,6 +132,36 @@ module "example_nginx_ecs" {
   depends_on = [module.example_alb_listner]
 }
 
+module "s3_bucket_cloudwatch_logs" {
+  source      = "./modules/s3/artifact"
+  bucket_name = "kensuke-takahara-terraform-training-cloudwatch-logs-bucket"
+}
+
+module "kinesis_data_firehose_role" {
+  source     = "./modules/iam_role"
+  name       = "kinesis-data-firehose"
+  identifier = "firehose.amazonaws.com"
+  policy     = data.aws_iam_policy_document.kinesis_data_firehose.json
+}
+
+resource "aws_kinesis_firehose_delivery_stream" "example" {
+  name        = "example"
+  destination = "s3"
+
+  s3_configuration {
+    role_arn   = module.kinesis_data_firehose_role.iam_role_arn
+    bucket_arn = module.s3_bucket_cloudwatch_logs.arn
+    prefix     = "ecs-scheduled-tasks/example"
+  }
+}
+
+module "cloudwatch_logs_role" {
+  source     = "./modules/iam_role"
+  name       = "cloudwatch-logs"
+  identifier = "logs.ap-northeast-1.amazonaws.com"
+  policy     = data.aws_iam_policy_document.cloudwatch_logs.json
+}
+
 module "ecs_events_role" {
   source     = "./modules/iam_role"
   name       = "ecs-events"
@@ -140,11 +170,13 @@ module "ecs_events_role" {
 }
 
 module "example_batch_ecs" {
-  source             = "./modules/ecs/batch"
-  execution_role_arn = module.ecs_task_execution_role.iam_role_arn
-  event_role_arn     = module.ecs_events_role.iam_role_arn
-  ecs_cluster_arn    = module.example_nginx_ecs.ecs_cluster_arn
-  subnet_ids         = module.network.private_subnet_ids
+  source                       = "./modules/ecs/batch"
+  execution_role_arn           = module.ecs_task_execution_role.iam_role_arn
+  event_role_arn               = module.ecs_events_role.iam_role_arn
+  ecs_cluster_arn              = module.example_nginx_ecs.ecs_cluster_arn
+  subnet_ids                   = module.network.private_subnet_ids
+  firehose_arn                 = aws_kinesis_firehose_delivery_stream.example.arn
+  subscription_filter_role_arn = module.cloudwatch_logs_role.iam_role_arn
 }
 
 resource "aws_kms_key" "example" {
@@ -249,27 +281,4 @@ module "session_manager_example" {
   iam_role_name       = module.ec2_for_ssm_role.iam_role_name
   private_subnet_id   = module.network.private_subnet_1a_id
   operation_bucket_id = module.s3_bucket_operation.id
-}
-
-module "s3_bucket_cloudwatch_logs" {
-  source      = "./modules/s3/artifact"
-  bucket_name = "kensuke-takahara-terraform-training-cloudwatch-logs-bucket"
-}
-
-module "kinesis_data_firehose_role" {
-  source     = "./modules/iam_role"
-  name       = "kinesis-data-firehose"
-  identifier = "firehose.amazonaws.com"
-  policy     = data.aws_iam_policy_document.kinesis_data_firehose.json
-}
-
-resource "aws_kinesis_firehose_delivery_stream" "example" {
-  name        = "example"
-  destination = "s3"
-
-  s3_configuration {
-    role_arn   = module.kinesis_data_firehose_role.iam_role_arn
-    bucket_arn = module.s3_bucket_cloudwatch_logs.arn
-    prefix     = "ecs-scheduled-tasks/example"
-  }
 }

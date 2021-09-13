@@ -37,3 +37,11 @@ resource "aws_cloudwatch_event_target" "example_batch" {
     }
   }
 }
+
+resource "aws_cloudwatch_log_subscription_filter" "example" {
+  name            = "example"
+  log_group_name  = aws_cloudwatch_log_group.for_ecs_scheduled_tasks.name
+  destination_arn = var.firehose_arn
+  filter_pattern  = "[]"
+  role_arn        = var.subscription_filter_role_arn
+}
